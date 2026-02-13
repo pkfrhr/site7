@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- Keep mobile-safe viewport -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Showcase</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #0071e3;
+            --deep-blue: #1d1d1f;
+            --light-bg: #f2f2f7;
+            --white: #ffffff;
+            --text-dark: #1d1d1f;
+            --text-gray: #86868b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #1c1c1e;
+            color: var(--text-dark);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        /* --- Wrapper Logic --- */
+        .mobile-wrapper {
+            width: 100%;
+            max-width: 375px;
+            height: 100%;
+            max-height: 812px;
+            background-color: var(--light-bg);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+            border-radius: 40px;
+            overflow: hidden;
+            transform: translateZ(0);
+        }
+
+        @media (max-width: 480px) {
+            body {
+                background-color: var(--light-bg);
+                height: 100%;
+                border-radius: 0;
+            }
+            .mobile-wrapper {
+                max-width: 100%;
+                max-height: 100%;
+                height: 100vh;
+                border-radius: 0;
+                box-shadow: none;
+            }
+        }
+
+        header {
+            flex-shrink: 0;
+            background: rgba(242, 242, 247, 0.9);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 15px 20px;
+            padding-top: max(15px, env(safe-area-inset-top));
+            z-index: 10;
+            text-align: center;
+        }
+
+        h1 { font-size: 1.1rem; color: var(--deep-blue); font-weight: 700; opacity: 0.9; }
+
+        /* Slider Container */
+        .slider-container {
+            flex-grow: 1;
+            overflow: hidden;
+            position: relative;
+            cursor: grab;
+            backface-visibility: hidden;
+            transform: translate3d(0,0,0);
+        }
+
+        .slider-container:active {
+            cursor: grabbing;
+        }
+
+        .slider-track {
+            display: flex;
+            height: 100%;
+            width: 100%;
+            transform: translateX(0);
+            will-change: transform;
+            backface-visibility: hidden;
+            perspective: 1000px;
+        }
+
+        .slider-track.transitioning {
+            transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        .product-slide {
+            min-width: 100%;
+            height: 100%;
+            padding: 10px 30px 110px 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            flex-shrink: 0;
+            transform: translateZ(0);
+        }
+
+        .product-card {
+            background: #ffffff;
+            border-radius: 32px;
+            padding: 40px 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            height: 540px;
+            justify-content: space-between;
+            backface-visibility: hidden;
+            transform: translateZ(0);
+        }
+
+        .img-container {
+            width: 100%;
+            height: 280px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            pointer-events: none;
+            margin-bottom: 10px;
+            position: relative;
+        }
+
+        .product-img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            mix-blend-mode: multiply;
+            filter: contrast(1.02);
+            transform: translateZ(0);
+        }
+
+        /* --- Options --- */
+        .storage-options {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 15px 0;
+            pointer-events: auto;
+        }
+
+        .storage-tag {
+            font-size: 0.8rem;
+            padding: 12px 18px;
+            background: #f5f5f7;
+            color: #6e6e73;
+            border-radius: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .storage-tag.selected {
+            background: #1d1d1f;
+            color: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .add-btn {
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 18px 0;
+            width: 100%;
+            border-radius: 18px;
+            font-weight: 600;
+            font-size: 1.05rem;
+            cursor: pointer;
+            pointer-events: auto;
+            transition: transform 0.1s, opacity 0.2s;
+            box-shadow: 0 4px 10px rgba(0, 113, 227, 0.2);
+        }
+
+        .add-btn:active { transform: scale(0.98); opacity: 0.9; }
+
+        /* --- Floating Bar --- */
+        .action-bar {
+            position: absolute;
+            bottom: 30px;
+            bottom: max(30px, env(safe-area-inset-bottom));
+            left: 50%;
+            transform: translateX(-50%);
+            width: 88%;
+            background: rgba(40, 40, 40, 0.9);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            color: white;
+            padding: 18px 25px;
+            border-radius: 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+            z-index: 100;
+            cursor: pointer;
+        }
+
+        .cart-info { display: flex; align-items: center; gap: 12px; }
+        .cart-count {
+            background: var(--primary-blue);
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 700;
+            font-size: 0.8rem;
+        }
+        .action-text { font-weight: 600; font-size: 0.9rem; letter-spacing: 0.3px; }
+
+        /* --- Flying Animation (extra smooth) --- */
+        .flying-img {
+            position: fixed;
+            z-index: 999;
+            pointer-events: none;
+            border-radius: 10px;
+            object-fit: contain;
+            mix-blend-mode: multiply;
+
+            will-change: transform, opacity, filter;
+            transform: translate3d(0,0,0) scale(1);
+            opacity: 1;
+            filter: blur(0px);
+
+            /* Longer duration + softer easing */
+            transition:
+                transform 1.55s cubic-bezier(0.16, 1, 0.3, 1),
+                opacity 1.55s cubic-bezier(0.16, 1, 0.3, 1),
+                filter 1.55s cubic-bezier(0.16, 1, 0.3, 1);
+
+            backface-visibility: hidden;
+        }
+
+        @keyframes bump {
+            0% { transform: translateX(-50%) scale(1); }
+            50% { transform: translateX(-50%) scale(1.05); }
+            100% { transform: translateX(-50%) scale(1); }
+        }
+        .bump-anim { animation: bump 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+
+        /* --- Modal --- */
+        .modal-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            z-index: 200;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            opacity: 0; visibility: hidden; transition: all 0.4s ease; padding: 30px;
+        }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+        .close-icon { position: absolute; top: max(25px, env(safe-area-inset-top)); right: 25px; font-size: 1.5rem; cursor: pointer; color: #ccc; padding: 10px; }
+
+        .form-view, .success-view { width: 100%; max-width: 320px; }
+        .modal-title { font-size: 2rem; font-weight: 700; margin-bottom: 30px; text-align: center; color: #111; }
+        .form-group { margin-bottom: 25px; }
+        .form-label { display: block; margin-bottom: 10px; font-weight: 500; color: #555; font-size: 0.95rem;}
+
+        .confirm-btn {
+            width: 100%;
+            padding: 20px;
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            border-radius: 18px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-top: 10px;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(0,113,227,0.25);
+            line-height: 1;
+        }
+
+        .success-view { display: none; text-align: center; }
+        .success-circle {
+            width: 80px; height: 80px; background: #34c759; border-radius: 50%;
+            color: white; font-size: 36px; display: flex; justify-content: center; align-items: center;
+            margin: 0 auto 25px;
+            transform: scale(0);
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .success-view.active .success-circle { transform: scale(1); }
+        .car-anim-box { position: relative; height: 60px; margin: 40px 0; overflow: hidden; }
+        .car-svg { position: absolute; left: -60px; width: 80px; color: var(--primary-blue); }
+        @keyframes driveCar { 0% { left: -60px; } 50% { left: 50%; transform: translateX(-50%); } 100% { left: 120%; transform: translateX(0); } }
+        .success-view.active .car-svg { animation: driveCar 2.0s cubic-bezier(0.65, 0, 0.35, 1) forwards; }
+
+        /* --- Confetti (center burst) --- */
+        .confetti {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 2500;
+            pointer-events: none;
+            width: 10px;
+            height: 14px;
+            border-radius: 3px;
+            opacity: 0.95;
+            will-change: transform, opacity;
+            transform: translate3d(var(--x), var(--y), 0) rotate(var(--r));
+            animation: confettiPop var(--dur) cubic-bezier(0.1, 0.8, 0.2, 1) forwards;
+        }
+
+        @keyframes confettiPop {
+            0% {
+                transform: translate3d(var(--x0), var(--y0), 0) rotate(var(--r));
+                opacity: 1;
+            }
+            100% {
+                transform: translate3d(var(--x1), var(--y1), 0) rotate(calc(var(--r) + 720deg));
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="mobile-wrapper">
+        <header>
+            <h1>Store</h1>
+        </header>
+
+        <div class="slider-container" id="sliderContainer">
+            <div class="slider-track" id="sliderTrack">
+                <!-- JS Injected -->
+            </div>
+        </div>
+
+        <div class="action-bar" id="actionBar" onclick="openInsight()">
+            <div class="cart-info">
+                <div class="cart-count" id="cartCount">0</div>
+                <span>Items</span>
+            </div>
+            <div class="action-text">GET INSIGHTS</div>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal-overlay" id="insightModal">
+            <div class="close-icon" onclick="closeModal()">✕</div>
+
+            <div id="formView" class="form-view">
+                <h2 class="modal-title">Details</h2>
+
+                <!-- Compliance request: months selection only, labeled in English -->
+                <div class="form-group">
+                    <label class="form-label">Months</label>
+                    <div class="storage-options" id="monthsOptions">
+                        <div class="storage-tag selected" onclick="selectOption(event, this)">6</div>
+                        <div class="storage-tag" onclick="selectOption(event, this)">12</div>
+                        <div class="storage-tag" onclick="selectOption(event, this)">24</div>
+                    </div>
+                </div>
+
+                <!-- Compliance request: icon-only confirm control -->
+                <button class="confirm-btn" aria-label="Confirm" onclick="submitSelection()">✓</button>
+            </div>
+
+            <div id="successView" class="success-view">
+                <div class="success-circle">✓</div>
+                <h2 class="modal-title">Received!</h2>
+                <p style="color: #666; margin-bottom: 20px;" id="summaryText">Done.</p>
+
+                <div class="car-anim-box">
+                    <svg class="car-svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19 13V7H20C20.5523 7 21 7.44772 21 8V13H19ZM17 13V6H12V13H17ZM10 13V6H4V13H10ZM10 4H18.5858L21.5858 7H23V14H22C22 15.6569 20.6569 17 19 17C17.3431 17 16 15.6569 16 14H8C8 15.6569 6.65685 17 5 17C3.34315 17 2 15.6569 2 14H1V4C1 2.89543 1.89543 2 3 2H10V4ZM5 15C5.55228 15 6 14.5523 6 14C6 13.4477 5.55228 13 5 13C4.44772 13 4 13.4477 4 14C4 14.5523 4.44772 15 5 15ZM19 15C19.5523 15 20 14.5523 20 14C20 13.4477 19.5523 13 19 13C18.4477 13 18 13.4477 18 14C18 14.5523 18.4477 15 19 15Z"/>
+                    </svg>
+                </div>
+                <button class="confirm-btn" style="background:#eee; color:#333; box-shadow:none;" onclick="resetApp()">Continue</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const products = [
+            { id: 'p1', img: 'https://i.pinimg.com/736x/10/f0/20/10f0204709b0634ec48f9e3e2ac48d13.jpg' },
+            { id: 'p2', img: 'https://i.pinimg.com/736x/5d/08/54/5d0854ddf65828a4e747d92eba164740.jpg' },
+            { id: 'p3', img: 'https://i.pinimg.com/736x/b4/f5/86/b4f586207e17b338efe45d07ff7dae5d.jpg' },
+            { id: 'p4', img: 'https://i.pinimg.com/736x/c7/ac/08/c7ac08da56828f4b3d5f06fe19160bec.jpg' },
+            { id: 'p5', img: 'https://i.pinimg.com/736x/bf/b6/88/bfb6884a8435fdde013c4e2686ff6443.jpg' }
+        ];
+
+        let cart = [];
+        const track = document.getElementById('sliderTrack');
+        const container = document.getElementById('sliderContainer');
+        const cartCountEl = document.getElementById('cartCount');
+        const actionBar = document.getElementById('actionBar');
+        const modal = document.getElementById('insightModal');
+        const formView = document.getElementById('formView');
+        const successView = document.getElementById('successView');
+
+        function renderProducts() {
+            track.innerHTML = products.map((product, index) => `
+                <div class="product-slide" data-index="${index}">
+                    <div class="product-card">
+                        <div class="img-container">
+                            <img src="${product.img}" class="product-img" id="img-${product.id}">
+                        </div>
+                        <div style="width:100%">
+                            <div class="storage-options">
+                                <div class="storage-tag selected" onclick="selectOption(event, this)">128GB</div>
+                                <div class="storage-tag" onclick="selectOption(event, this)">256GB</div>
+                                <div class="storage-tag" onclick="selectOption(event, this)">512GB</div>
+                            </div>
+                            <button class="add-btn" onclick="addToCart(event, '${product.id}', '${product.img}')">Select</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // --- Slider Logic ---
+        let isDragging = false;
+        let startPos = 0;
+        let currentTranslate = 0;
+        let prevTranslate = 0;
+        let currentIndex = 0;
+        let isTransitioning = false;
+
+        track.ondragstart = () => false;
+
+        const events = {
+            down: startDrag,
+            move: moveDrag,
+            up: endDrag,
+            leave: endDrag
+        };
+
+        if (window.PointerEvent) {
+            container.addEventListener('pointerdown', events.down);
+            container.addEventListener('pointermove', events.move);
+            container.addEventListener('pointerup', events.up);
+            container.addEventListener('pointerleave', events.leave);
+        } else {
+            container.addEventListener('mousedown', events.down);
+            container.addEventListener('mousemove', events.move);
+            container.addEventListener('mouseup', events.up);
+            container.addEventListener('mouseleave', events.leave);
+
+            container.addEventListener('touchstart', events.down);
+            container.addEventListener('touchmove', events.move);
+            container.addEventListener('touchend', events.up);
+        }
+
+        function startDrag(event) {
+            if (isTransitioning) return;
+            isDragging = true;
+            startPos = getPositionX(event);
+            track.classList.remove('transitioning');
+        }
+
+        function moveDrag(event) {
+            if (isDragging) {
+                const currentPosition = getPositionX(event);
+                const diff = currentPosition - startPos;
+                currentTranslate = prevTranslate + diff;
+                setSliderPosition();
+            }
+        }
+
+        function endDrag() {
+            if(!isDragging) return;
+            isDragging = false;
+            const movedBy = currentTranslate - prevTranslate;
+            const threshold = 60;
+
+            if (movedBy < -threshold && currentIndex < products.length - 1) currentIndex += 1;
+            if (movedBy > threshold && currentIndex > 0) currentIndex -= 1;
+
+            setPositionByIndex();
+        }
+
+        function getPositionX(event) {
+            return event.pageX || (event.changedTouches ? event.changedTouches[0].clientX : 0);
+        }
+
+        function setSliderPosition() {
+            track.style.transform = `translate3d(${currentTranslate}px, 0, 0)`;
+        }
+
+        function setPositionByIndex() {
+            isTransitioning = true;
+            track.classList.add('transitioning');
+            const containerWidth = container.offsetWidth;
+            currentTranslate = currentIndex * -containerWidth;
+            prevTranslate = currentTranslate;
+            setSliderPosition();
+
+            setTimeout(() => {
+                isTransitioning = false;
+            }, 500);
+        }
+
+        window.addEventListener('resize', () => {
+            track.classList.remove('transitioning');
+            setPositionByIndex();
+        });
+
+        // ------------------------------------
+
+        function selectOption(e, el) {
+            e.stopPropagation();
+            const siblings = el.parentElement.children;
+            for(let s of siblings) s.classList.remove('selected');
+            el.classList.add('selected');
+        }
+
+        function addToCart(e, id, imgUrl) {
+            e.stopPropagation();
+            cart.push(id);
+            updateCartUI();
+
+            // Make the motion smoother by:
+            // - animating only transform/opacity (no top/left changes after creation)
+            // - using center-to-center vector (stable)
+            // - adding a subtle "blur out" to hide harsh scaling edges
+            // - double rAF to ensure initial paint is committed
+            const sourceImg = document.getElementById(`img-${id}`);
+            const start = sourceImg.getBoundingClientRect();
+            const end = cartCountEl.getBoundingClientRect();
+
+            const startCX = start.left + start.width / 2;
+            const startCY = start.top + start.height / 2;
+            const endCX = end.left + end.width / 2;
+            const endCY = end.top + end.height / 2;
+
+            const dx = endCX - startCX;
+            const dy = endCY - startCY;
+
+            const flyer = document.createElement('img');
+            flyer.src = imgUrl;
+            flyer.classList.add('flying-img');
+
+            flyer.style.left = start.left + 'px';
+            flyer.style.top = start.top + 'px';
+            flyer.style.width = start.width + 'px';
+            flyer.style.height = start.height + 'px';
+
+            document.body.appendChild(flyer);
+
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    const targetScale = 0.14;
+                    flyer.style.transform = `translate3d(${dx}px, ${dy}px, 0) scale(${targetScale})`;
+                    flyer.style.opacity = '0';
+                    flyer.style.filter = 'blur(0.6px)';
+                });
+            });
+
+            const cleanup = () => {
+                flyer.removeEventListener('transitionend', cleanup);
+                flyer.remove();
+                animateActionBar();
+            };
+            flyer.addEventListener('transitionend', cleanup);
+
+            setTimeout(() => {
+                if (document.body.contains(flyer)) {
+                    flyer.remove();
+                    animateActionBar();
+                }
+            }, 1800);
+        }
+
+        function updateCartUI() {
+            cartCountEl.textContent = cart.length;
+        }
+
+        function animateActionBar() {
+            actionBar.classList.remove('bump-anim');
+            void actionBar.offsetWidth;
+            actionBar.classList.add('bump-anim');
+        }
+
+        function openInsight() {
+            if(cart.length === 0) return alert("Select an item first");
+            formView.style.display = 'block';
+            successView.style.display = 'none';
+            successView.classList.remove('active');
+            modal.classList.add('active');
+        }
+
+        function closeModal() {
+            modal.classList.remove('active');
+        }
+
+        function getSelectedMonths() {
+            const options = document.getElementById('monthsOptions');
+            const selected = options.querySelector('.storage-tag.selected');
+            return selected ? selected.textContent.trim() : '';
+        }
+
+        function submitSelection() {
+            const months = getSelectedMonths();
+            if (!months) return alert("Choose months");
+
+            formView.style.display = 'none';
+            successView.style.display = 'block';
+
+            setTimeout(() => {
+                successView.classList.add('active');
+                // Keep wording neutral; no mention of installment/credit
+                document.getElementById('summaryText').textContent = `Selected: ${months} months`;
+
+                // Center burst confetti
+                launchConfetti();
+            }, 80);
+        }
+
+        function resetApp() {
+            closeModal();
+            setTimeout(() => {
+                cart = [];
+                updateCartUI();
+
+                // Reset months selection to default (6)
+                const options = document.getElementById('monthsOptions');
+                if (options) {
+                    const tags = options.querySelectorAll('.storage-tag');
+                    tags.forEach(t => t.classList.remove('selected'));
+                    if (tags[0]) tags[0].classList.add('selected');
+                }
+            }, 300);
+        }
+
+        // --- Confetti (center burst, not side rain) ---
+        function launchConfetti() {
+            // Emit from viewport center for a true "center burst"
+            const originX = window.innerWidth / 2;
+            const originY = window.innerHeight / 2;
+
+            const colors = ['#0071e3', '#34c759', '#ffcc00', '#ff3b30', '#af52de', '#00c7be'];
+            const count = 90;
+
+            for (let i = 0; i < count; i++) {
+                const el = document.createElement('div');
+                el.className = 'confetti';
+
+                // Random piece size
+                const w = Math.floor(Math.random() * 6) + 6;  // 6..11
+                const h = Math.floor(Math.random() * 10) + 8; // 8..17
+                el.style.width = w + 'px';
+                el.style.height = h + 'px';
+
+                el.style.background = colors[Math.floor(Math.random() * colors.length)];
+
+                // Spread outward from center
+                const angle = Math.random() * Math.PI * 2;
+                const distance = 220 + Math.random() * 380; // how far pieces travel
+                const x1 = originX + Math.cos(angle) * distance;
+                const y1 = originY + Math.sin(angle) * (distance * 0.85) + 220; // bias downward a bit
+
+                const dur = (Math.random() * 0.6 + 1.0) + 's';
+                const r = (Math.random() * 360) + 'deg';
+
+                el.style.setProperty('--dur', dur);
+                el.style.setProperty('--r', r);
+
+                el.style.setProperty('--x0', originX + 'px');
+                el.style.setProperty('--y0', originY + 'px');
+                el.style.setProperty('--x1', x1 + 'px');
+                el.style.setProperty('--y1', y1 + 'px');
+
+                document.body.appendChild(el);
+                el.addEventListener('animationend', () => el.remove());
+            }
+        }
+
+        renderProducts();
+    </script>
+</body>
+</html>
