@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <!-- Keep mobile-safe viewport -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Showcase</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
@@ -36,7 +35,6 @@
             overflow: hidden;
         }
 
-        /* --- Wrapper Logic --- */
         .mobile-wrapper {
             width: 100%;
             max-width: 375px;
@@ -80,7 +78,6 @@
 
         h1 { font-size: 1.1rem; color: var(--deep-blue); font-weight: 700; opacity: 0.9; }
 
-        /* Slider Container */
         .slider-container {
             flex-grow: 1;
             overflow: hidden;
@@ -90,18 +87,15 @@
             transform: translate3d(0,0,0);
         }
 
-        .slider-container:active {
-            cursor: grabbing;
-        }
+        .slider-container:active { cursor: grabbing; }
 
         .slider-track {
             display: flex;
             height: 100%;
-            width: 100%;
-            transform: translateX(0);
             will-change: transform;
             backface-visibility: hidden;
             perspective: 1000px;
+            transform: translateX(0);
         }
 
         .slider-track.transitioning {
@@ -110,6 +104,7 @@
 
         .product-slide {
             min-width: 100%;
+            width: 100%;
             height: 100%;
             padding: 10px 30px 110px 30px;
             display: flex;
@@ -137,7 +132,7 @@
 
         .img-container {
             width: 100%;
-            height: 280px;
+            height: 380px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -153,32 +148,6 @@
             mix-blend-mode: multiply;
             filter: contrast(1.02);
             transform: translateZ(0);
-        }
-
-        /* --- Options --- */
-        .storage-options {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin: 15px 0;
-            pointer-events: auto;
-        }
-
-        .storage-tag {
-            font-size: 0.8rem;
-            padding: 12px 18px;
-            background: #f5f5f7;
-            color: #6e6e73;
-            border-radius: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .storage-tag.selected {
-            background: #1d1d1f;
-            color: white;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
 
         .add-btn {
@@ -198,10 +167,8 @@
 
         .add-btn:active { transform: scale(0.98); opacity: 0.9; }
 
-        /* --- Floating Bar --- */
         .action-bar {
             position: absolute;
-            bottom: 30px;
             bottom: max(30px, env(safe-area-inset-bottom));
             left: 50%;
             transform: translateX(-50%);
@@ -235,7 +202,6 @@
         }
         .action-text { font-weight: 600; font-size: 0.9rem; letter-spacing: 0.3px; }
 
-        /* --- Flying Animation (extra smooth) --- */
         .flying-img {
             position: fixed;
             z-index: 999;
@@ -243,17 +209,14 @@
             border-radius: 10px;
             object-fit: contain;
             mix-blend-mode: multiply;
-
             will-change: transform, opacity, filter;
             transform: translate3d(0,0,0) scale(1);
             opacity: 1;
             filter: blur(0px);
-
             transition:
                 transform 1.55s cubic-bezier(0.16, 1, 0.3, 1),
                 opacity 1.55s cubic-bezier(0.16, 1, 0.3, 1),
                 filter 1.55s cubic-bezier(0.16, 1, 0.3, 1);
-
             backface-visibility: hidden;
         }
 
@@ -264,7 +227,6 @@
         }
         .bump-anim { animation: bump 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 
-        /* --- Modal --- */
         .modal-overlay {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -280,8 +242,6 @@
 
         .form-view, .success-view { width: 100%; max-width: 320px; }
         .modal-title { font-size: 2rem; font-weight: 700; margin-bottom: 30px; text-align: center; color: #111; }
-        .form-group { margin-bottom: 25px; }
-        .form-label { display: block; margin-bottom: 10px; font-weight: 500; color: #555; font-size: 0.95rem;}
 
         .confirm-btn {
             width: 100%;
@@ -312,32 +272,21 @@
         @keyframes driveCar { 0% { left: -60px; } 50% { left: 50%; transform: translateX(-50%); } 100% { left: 120%; transform: translateX(0); } }
         .success-view.active .car-svg { animation: driveCar 2.0s cubic-bezier(0.65, 0, 0.35, 1) forwards; }
 
-        /* --- Confetti (center burst, slower) --- */
         .confetti {
             position: fixed;
-            top: 0;
-            left: 0;
+            top: 0; left: 0;
             z-index: 2500;
             pointer-events: none;
-            width: 10px;
-            height: 14px;
+            width: 10px; height: 14px;
             border-radius: 3px;
             opacity: 0.95;
             will-change: transform, opacity;
-            transform: translate3d(var(--x), var(--y), 0) rotate(var(--r));
-            /* Slower easing for longer feel */
             animation: confettiPop var(--dur) cubic-bezier(0.05, 0.8, 0.15, 1) forwards;
         }
 
         @keyframes confettiPop {
-            0% {
-                transform: translate3d(var(--x0), var(--y0), 0) rotate(var(--r));
-                opacity: 1;
-            }
-            100% {
-                transform: translate3d(var(--x1), var(--y1), 0) rotate(calc(var(--r) + 720deg));
-                opacity: 0;
-            }
+            0% { transform: translate3d(var(--x0), var(--y0), 0) rotate(var(--r)); opacity: 1; }
+            100% { transform: translate3d(var(--x1), var(--y1), 0) rotate(calc(var(--r) + 720deg)); opacity: 0; }
         }
     </style>
 </head>
@@ -349,9 +298,7 @@
         </header>
 
         <div class="slider-container" id="sliderContainer">
-            <div class="slider-track" id="sliderTrack">
-                <!-- JS Injected -->
-            </div>
+            <div class="slider-track" id="sliderTrack"></div>
         </div>
 
         <div class="action-bar" id="actionBar" onclick="openInsight()">
@@ -362,24 +309,11 @@
             <div class="action-text">GET INSIGHTS</div>
         </div>
 
-        <!-- Modal -->
         <div class="modal-overlay" id="insightModal">
             <div class="close-icon" onclick="closeModal()">✕</div>
 
             <div id="formView" class="form-view">
                 <h2 class="modal-title">Details</h2>
-
-                <!-- Compliance request: months selection only, labeled in English -->
-                <div class="form-group">
-                    <label class="form-label">Months</label>
-                    <div class="storage-options" id="monthsOptions">
-                        <div class="storage-tag selected" onclick="selectOption(event, this)">6</div>
-                        <div class="storage-tag" onclick="selectOption(event, this)">12</div>
-                        <div class="storage-tag" onclick="selectOption(event, this)">24</div>
-                    </div>
-                </div>
-
-                <!-- Compliance request: icon-only confirm control -->
                 <button class="confirm-btn" aria-label="Confirm" onclick="submitSelection()">✓</button>
             </div>
 
@@ -387,7 +321,6 @@
                 <div class="success-circle">✓</div>
                 <h2 class="modal-title">Received!</h2>
                 <p style="color: #666; margin-bottom: 20px;" id="summaryText">Done.</p>
-
                 <div class="car-anim-box">
                     <svg class="car-svg" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M19 13V7H20C20.5523 7 21 7.44772 21 8V13H19ZM17 13V6H12V13H17ZM10 13V6H4V13H10ZM10 4H18.5858L21.5858 7H23V14H22C22 15.6569 20.6569 17 19 17C17.3431 17 16 15.6569 16 14H8C8 15.6569 6.65685 17 5 17C3.34315 17 2 15.6569 2 14H1V4C1 2.89543 1.89543 2 3 2H10V4ZM5 15C5.55228 15 6 14.5523 6 14C6 13.4477 5.55228 13 5 13C4.44772 13 4 13.4477 4 14C4 14.5523 4.44772 15 5 15ZM19 15C19.5523 15 20 14.5523 20 14C20 13.4477 19.5523 13 19 13C18.4477 13 18 13.4477 18 14C18 14.5523 18.4477 15 19 15Z"/>
@@ -400,11 +333,11 @@
 
     <script>
         const products = [
-            { id: 'p1', img: 'https://i.pinimg.com/736x/10/f0/20/10f0204709b0634ec48f9e3e2ac48d13.jpg' },
-            { id: 'p2', img: 'https://i.pinimg.com/736x/5d/08/54/5d0854ddf65828a4e747d92eba164740.jpg' },
-            { id: 'p3', img: 'https://i.pinimg.com/736x/b4/f5/86/b4f586207e17b338efe45d07ff7dae5d.jpg' },
-            { id: 'p4', img: 'https://i.pinimg.com/736x/c7/ac/08/c7ac08da56828f4b3d5f06fe19160bec.jpg' },
-            { id: 'p5', img: 'https://i.pinimg.com/736x/bf/b6/88/bfb6884a8435fdde013c4e2686ff6443.jpg' }
+            { id: 'p2', img: 'https://i.pinimg.com/1200x/50/22/29/502229f1a97c5c6b0e6fd5051f2f6601.jpg' },
+            { id: 'p3', img: 'https://i.pinimg.com/736x/ea/8f/97/ea8f97c58f2192abb62c297565bf701b.jpg' },
+            { id: 'p4', img: 'https://i.pinimg.com/736x/70/b0/18/70b0182dc363595805db970eb3fce382.jpg' },
+            { id: 'p5', img: 'https://i.pinimg.com/1200x/d8/18/a0/d818a07b797cbc8b0c300568de03d165.jpg' },
+            { id: 'p6', img: 'https://i.pinimg.com/1200x/4d/bd/de/4dbdded1e68f4ec9f69a1954214e1282.jpg' }
         ];
 
         let cart = [];
@@ -424,11 +357,6 @@
                             <img src="${product.img}" class="product-img" id="img-${product.id}">
                         </div>
                         <div style="width:100%">
-                            <div class="storage-options">
-                                <div class="storage-tag selected" onclick="selectOption(event, this)">128GB</div>
-                                <div class="storage-tag" onclick="selectOption(event, this)">256GB</div>
-                                <div class="storage-tag" onclick="selectOption(event, this)">512GB</div>
-                            </div>
                             <button class="add-btn" onclick="addToCart(event, '${product.id}', '${product.img}')">Select</button>
                         </div>
                     </div>
@@ -436,7 +364,6 @@
             `).join('');
         }
 
-        // --- Slider Logic ---
         let isDragging = false;
         let startPos = 0;
         let currentTranslate = 0;
@@ -446,12 +373,7 @@
 
         track.ondragstart = () => false;
 
-        const events = {
-            down: startDrag,
-            move: moveDrag,
-            up: endDrag,
-            leave: endDrag
-        };
+        const events = { down: startDrag, move: moveDrag, up: endDrag, leave: endDrag };
 
         if (window.PointerEvent) {
             container.addEventListener('pointerdown', events.down);
@@ -463,7 +385,6 @@
             container.addEventListener('mousemove', events.move);
             container.addEventListener('mouseup', events.up);
             container.addEventListener('mouseleave', events.leave);
-
             container.addEventListener('touchstart', events.down);
             container.addEventListener('touchmove', events.move);
             container.addEventListener('touchend', events.up);
@@ -477,23 +398,19 @@
         }
 
         function moveDrag(event) {
-            if (isDragging) {
-                const currentPosition = getPositionX(event);
-                const diff = currentPosition - startPos;
-                currentTranslate = prevTranslate + diff;
-                setSliderPosition();
-            }
+            if (!isDragging) return;
+            const currentPosition = getPositionX(event);
+            currentTranslate = prevTranslate + (currentPosition - startPos);
+            setSliderPosition();
         }
 
         function endDrag() {
-            if(!isDragging) return;
+            if (!isDragging) return;
             isDragging = false;
             const movedBy = currentTranslate - prevTranslate;
             const threshold = 60;
-
-            if (movedBy < -threshold && currentIndex < products.length - 1) currentIndex += 1;
-            if (movedBy > threshold && currentIndex > 0) currentIndex -= 1;
-
+            if (movedBy < -threshold && currentIndex < products.length - 1) currentIndex++;
+            if (movedBy > threshold && currentIndex > 0) currentIndex--;
             setPositionByIndex();
         }
 
@@ -508,29 +425,16 @@
         function setPositionByIndex() {
             isTransitioning = true;
             track.classList.add('transitioning');
-            const containerWidth = container.offsetWidth;
-            currentTranslate = currentIndex * -containerWidth;
+            currentTranslate = currentIndex * -container.offsetWidth;
             prevTranslate = currentTranslate;
             setSliderPosition();
-
-            setTimeout(() => {
-                isTransitioning = false;
-            }, 500);
+            setTimeout(() => { isTransitioning = false; }, 500);
         }
 
         window.addEventListener('resize', () => {
             track.classList.remove('transitioning');
             setPositionByIndex();
         });
-
-        // ------------------------------------
-
-        function selectOption(e, el) {
-            e.stopPropagation();
-            const siblings = el.parentElement.children;
-            for(let s of siblings) s.classList.remove('selected');
-            el.classList.add('selected');
-        }
 
         function addToCart(e, id, imgUrl) {
             e.stopPropagation();
@@ -541,52 +445,30 @@
             const start = sourceImg.getBoundingClientRect();
             const end = cartCountEl.getBoundingClientRect();
 
-            const startCX = start.left + start.width / 2;
-            const startCY = start.top + start.height / 2;
-            const endCX = end.left + end.width / 2;
-            const endCY = end.top + end.height / 2;
-
-            const dx = endCX - startCX;
-            const dy = endCY - startCY;
+            const dx = (end.left + end.width / 2) - (start.left + start.width / 2);
+            const dy = (end.top + end.height / 2) - (start.top + start.height / 2);
 
             const flyer = document.createElement('img');
             flyer.src = imgUrl;
             flyer.classList.add('flying-img');
-
             flyer.style.left = start.left + 'px';
             flyer.style.top = start.top + 'px';
             flyer.style.width = start.width + 'px';
             flyer.style.height = start.height + 'px';
-
             document.body.appendChild(flyer);
 
-            requestAnimationFrame(() => {
-                requestAnimationFrame(() => {
-                    const targetScale = 0.14;
-                    flyer.style.transform = `translate3d(${dx}px, ${dy}px, 0) scale(${targetScale})`;
-                    flyer.style.opacity = '0';
-                    flyer.style.filter = 'blur(0.6px)';
-                });
-            });
+            requestAnimationFrame(() => requestAnimationFrame(() => {
+                flyer.style.transform = `translate3d(${dx}px, ${dy}px, 0) scale(0.14)`;
+                flyer.style.opacity = '0';
+                flyer.style.filter = 'blur(0.6px)';
+            }));
 
-            const cleanup = () => {
-                flyer.removeEventListener('transitionend', cleanup);
-                flyer.remove();
-                animateActionBar();
-            };
+            const cleanup = () => { flyer.remove(); animateActionBar(); };
             flyer.addEventListener('transitionend', cleanup);
-
-            setTimeout(() => {
-                if (document.body.contains(flyer)) {
-                    flyer.remove();
-                    animateActionBar();
-                }
-            }, 1800);
+            setTimeout(() => { if (document.body.contains(flyer)) { flyer.remove(); animateActionBar(); } }, 1800);
         }
 
-        function updateCartUI() {
-            cartCountEl.textContent = cart.length;
-        }
+        function updateCartUI() { cartCountEl.textContent = cart.length; }
 
         function animateActionBar() {
             actionBar.classList.remove('bump-anim');
@@ -595,89 +477,48 @@
         }
 
         function openInsight() {
-            if(cart.length === 0) return alert("Select an item first");
+            if (cart.length === 0) return alert("Select an item first");
             formView.style.display = 'block';
             successView.style.display = 'none';
             successView.classList.remove('active');
             modal.classList.add('active');
         }
 
-        function closeModal() {
-            modal.classList.remove('active');
-        }
-
-        function getSelectedMonths() {
-            const options = document.getElementById('monthsOptions');
-            const selected = options.querySelector('.storage-tag.selected');
-            return selected ? selected.textContent.trim() : '';
-        }
+        function closeModal() { modal.classList.remove('active'); }
 
         function submitSelection() {
-            const months = getSelectedMonths();
-            if (!months) return alert("Choose months");
-
             formView.style.display = 'none';
             successView.style.display = 'block';
-
             setTimeout(() => {
                 successView.classList.add('active');
-                document.getElementById('summaryText').textContent = `Selected: ${months} months`;
-
+                document.getElementById('summaryText').textContent = 'Done.';
                 launchConfetti();
             }, 80);
         }
 
         function resetApp() {
             closeModal();
-            setTimeout(() => {
-                cart = [];
-                updateCartUI();
-
-                const options = document.getElementById('monthsOptions');
-                if (options) {
-                    const tags = options.querySelectorAll('.storage-tag');
-                    tags.forEach(t => t.classList.remove('selected'));
-                    if (tags[0]) tags[0].classList.add('selected');
-                }
-            }, 300);
+            setTimeout(() => { cart = []; updateCartUI(); }, 300);
         }
 
-        // --- Confetti (center burst, slower/longer) ---
         function launchConfetti() {
             const originX = window.innerWidth / 2;
             const originY = window.innerHeight / 2;
-
             const colors = ['#0071e3', '#34c759', '#ffcc00', '#ff3b30', '#af52de', '#00c7be'];
-            const count = 100;
-
-            for (let i = 0; i < count; i++) {
+            for (let i = 0; i < 100; i++) {
                 const el = document.createElement('div');
                 el.className = 'confetti';
-
-                const w = Math.floor(Math.random() * 6) + 6;
-                const h = Math.floor(Math.random() * 10) + 8;
-                el.style.width = w + 'px';
-                el.style.height = h + 'px';
+                el.style.width = (Math.random() * 6 + 6) + 'px';
+                el.style.height = (Math.random() * 10 + 8) + 'px';
                 el.style.background = colors[Math.floor(Math.random() * colors.length)];
-
                 const angle = Math.random() * Math.PI * 2;
                 const distance = 260 + Math.random() * 520;
-
-                const x1 = originX + Math.cos(angle) * distance;
-                const y1 = originY + Math.sin(angle) * (distance * 0.85) + 280;
-
-                // Increased duration range to make confetti noticeably slower/longer
-                const dur = (Math.random() * 1.3 + 2.2) + 's'; // 2.2s .. 3.5s
-                const r = (Math.random() * 360) + 'deg';
-
-                el.style.setProperty('--dur', dur);
-                el.style.setProperty('--r', r);
-
+                el.style.setProperty('--dur', (Math.random() * 1.3 + 2.2) + 's');
+                el.style.setProperty('--r', (Math.random() * 360) + 'deg');
                 el.style.setProperty('--x0', originX + 'px');
                 el.style.setProperty('--y0', originY + 'px');
-                el.style.setProperty('--x1', x1 + 'px');
-                el.style.setProperty('--y1', y1 + 'px');
-
+                el.style.setProperty('--x1', (originX + Math.cos(angle) * distance) + 'px');
+                el.style.setProperty('--y1', (originY + Math.sin(angle) * distance * 0.85 + 280) + 'px');
                 document.body.appendChild(el);
                 el.addEventListener('animationend', () => el.remove());
             }
